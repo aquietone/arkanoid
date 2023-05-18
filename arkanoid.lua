@@ -120,6 +120,8 @@ local function DrawArkanoid(draw_list, a, m, t)
     end
 end
 
+local start = true
+local oldpos0x, oldpos0y
 local restart_timer = nil
 local flags = bit32.bor(ImGuiWindowFlags.NoTitleBar, ImGuiWindowFlags.NoCollapse, ImGuiWindowFlags.NoFocusOnAppearing,
         ImGuiWindowFlags.NoDocking, ImGuiWindowFlags.NoResize)
@@ -130,21 +132,32 @@ local function updateImGui()
     if shouldDraw then
         local draw_list = ImGui.GetWindowDrawList()
 
-        local p0x, p0y = ImGui.GetItemRectMin()
+        local x,y = ImGui.GetItemRectMin()
+        if x ~= oldpos0x or y ~= oldpos0y then
+            if not start then gameover = true end
+            oldpos0x = x
+            oldpos0y = y
+        end
         local mousepos = ImGui.GetMousePosVec()
 
-        if restart_timer and restart_timer+3000 < mq.gettime() then
+        if restart_timer and restart_timer+1000 < mq.gettime() then
             remaining = 60
             gameover = false
             should_reset = true
             restart_timer = nil
         end
-        if not gameover then
-            DrawArkanoid(draw_list, ImVec2(p0x, p0y), mousepos, ImGui.GetTime())
+        if start then
+            if ImGui.Button('Play') then
+                start = false
+                gameover = true
+                restart_timer = mq.gettime()
+            end
+        elseif not gameover then
+            DrawArkanoid(draw_list, ImVec2(x, y), mousepos, ImGui.GetTime())
         elseif not restart_timer and ImGui.Button('Play Again?') then
             restart_timer = mq.gettime()
         elseif restart_timer then
-            ImGui.Text('New game starting in %.02f seconds!', 3-(mq.gettime()-restart_timer)/1000)
+            ImGui.Text('New game starting in %.02f seconds!', 1-(mq.gettime()-restart_timer)/1000)
         end
     end
     ImGui.End()
