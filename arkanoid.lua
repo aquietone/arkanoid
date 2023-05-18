@@ -141,9 +141,7 @@ local function DrawArkanoid(draw_list, a, b, s, m, t)
             local o_b = bb.h.y-cy
             local o_x = math.min(o_l, o_r)
             local o_y = math.min(o_t, o_b)
-            local oldcx = cx
-            local oldcy = cy
-            if o_x < o_y then vx = -vx cx = oldcx else vy = -vy cy = oldcy end
+            if o_x < o_y then vx = -vx else vy = -vy end
         end
     end
     dt = t-lt
@@ -167,17 +165,13 @@ local function DrawArkanoid(draw_list, a, b, s, m, t)
     -- calculate ball position only when mouse is within the window
     -- also only when dt < 1 as starting new game for some reason causes it to be a large value
     if m.x > a.x and m.x < a.x+width and m.y > a.y and m.y < a.y+height and dt < 1 then
-        local oldcx = cx
-        local oldcy = cy
         cx = cx + (vx*dt*30)
         cy = cy + (vy*dt*30)
         if cx < a.x or cx > b.x then
             vx = -vx
-            cx = oldcx
         end
         if cy < a.y then
             vy = -vy
-            cy = oldcy
         end
     end
     if cy > a.y+height+20 or remaining == 0 then
