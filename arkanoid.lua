@@ -164,7 +164,8 @@ local function DrawArkanoid(draw_list, a, b, s, m, t)
     end
     draw_list:AddRectFilled(p.l, p.h, ImGui.GetColorU32(ImVec4(1.0, 1.0, 0.4, 1.0)))
     draw_list:AddCircleFilled(ImVec2(cx, cy), r, ImGui.GetColorU32(ImVec4(1.0, 1.0, 0.4, 1.0)), 6)
-    -- calculate ball position
+    -- calculate ball position only when mouse is within the window
+    -- also only when dt < 1 as starting new game for some reason causes it to be a large value
     if m.x > a.x and m.x < a.x+width and m.y > a.y and m.y < a.y+height and dt < 1 then
         local oldcx = cx
         local oldcy = cy
@@ -180,7 +181,6 @@ local function DrawArkanoid(draw_list, a, b, s, m, t)
         end
     end
     if cy > a.y+height+20 or remaining == 0 then
-        printf('%s %s', cy, a.y+height+20)
         gameover = true
     end
 end
